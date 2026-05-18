@@ -95,6 +95,9 @@ export const IFRAME_TEMPLATE = `
         const React = window.React;
         const ReactDOM = window.ReactDOM;
         
+        // Define exports to avoid "exports is not defined" error from Babel transpiled code
+        const exports = {};
+        
         function require(module) {
           if (module === 'react') return React;
           if (module === 'react-dom') return ReactDOM;

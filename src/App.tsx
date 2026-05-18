@@ -1,13 +1,14 @@
-import { useState } from 'react';
 import { Group, Panel, Separator } from 'react-resizable-panels';
+import { SandpackProvider, SandpackPreview, SandpackLayout } from '@codesandbox/sandpack-react';
+import { cobalt2 } from '@codesandbox/sandpack-themes';
 import Editor from './components/Editor/Editor';
-import Preview from './components/Preview/Preview';
+import Sidebar from './components/Sidebar/Sidebar';
 import { DEFAULT_CODE } from './utils/constants';
-import { useTranspile } from './hooks/useTranspile';
 
 function App() {
-  const [code, setCode] = useState(DEFAULT_CODE);
-  const { transpiledCode, error } = useTranspile(code);
+  const initialFiles = {
+    '/App.tsx': DEFAULT_CODE
+  };
 
   return (
     <div className="flex h-screen w-full flex-col bg-[#09090b] text-white">
@@ -36,22 +37,51 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-hidden p-4">
-        <Group orientation="horizontal">
-          <Panel defaultSize={50} minSize={30}>
-            <Editor 
-              value={code} 
-              onChange={(val) => setCode(val || '')} 
-              language="typescript"
-            />
-          </Panel>
+      <main className="flex-1 overflow-hidden flex flex-col">
+        <SandpackProvider 
+          template="react-ts" 
+          theme={cobalt2}
+          files={initialFiles}
+          options={{
+            activeFile: "/App.tsx",
+            visibleFiles: ["/App.tsx", "/index.tsx"]
+          }}
+        >
+          <div className="flex flex-1 w-full overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 p-4 flex flex-col">
+              <Group orientation="horizontal" className="flex-1">
+                <Panel defaultSize={50} minSize={30}>
+                  <Editor />
+                </Panel>
 
-          <Separator className="panel-resize-handle" />
+                <Separator className="panel-resize-handle" />
 
-          <Panel defaultSize={50} minSize={30}>
-            <Preview code={transpiledCode} err={error} />
-          </Panel>
-        </Group>
+                <Panel defaultSize={50} minSize={30}>
+                  <div className="h-full w-full overflow-hidden rounded-lg border border-zinc-800 bg-white shadow-2xl flex flex-col">
+                    <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-4 py-2">
+                      <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Preview</span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-zinc-300" />
+                        <div className="h-2 w-2 rounded-full bg-zinc-300" />
+                      </div>
+                    </div>
+                    <div className="flex-1 relative flex flex-col h-full">
+                      <SandpackLayout style={{ height: '100%', flex: 1, border: 'none', borderRadius: 0 }}>
+                        <SandpackPreview 
+                          showNavigator={true}
+                          showRefreshButton={true}
+                          showOpenInCodeSandbox={false}
+                          style={{ height: '100%' }}
+                        />
+                      </SandpackLayout>
+                    </div>
+                  </div>
+                </Panel>
+              </Group>
+            </div>
+          </div>
+        </SandpackProvider>
       </main>
 
       {/* Footer */}
@@ -61,8 +91,7 @@ function App() {
           <span>TypeScript JSX</span>
         </div>
         <div className="flex gap-4 uppercase tracking-widest">
-          <span>Line 1, Column 1</span>
-          <span>Spaces: 2</span>
+          <span>Sandpack Powered</span>
         </div>
       </footer>
     </div>

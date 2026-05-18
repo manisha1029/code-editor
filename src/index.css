@@ -76,3 +76,10 @@ body {
 .panel-resize-handle[data-active] {
   background-color: #6366f1;
 }
+
+/* Force Sandpack wrapper to take full height */
+.sp-wrapper {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column;
+}
