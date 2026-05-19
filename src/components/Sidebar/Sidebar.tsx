@@ -1,6 +1,6 @@
 import { type FC, useState } from 'react';
 import { useSandpack } from '@codesandbox/sandpack-react';
-import { Folder, File, FilePlus, FolderPlus, Package, Plus, Trash2 } from 'lucide-react';
+import { File, FilePlus, Package, Plus, Trash2 } from 'lucide-react';
 
 const Sidebar: FC = () => {
   const { sandpack } = useSandpack();
@@ -13,13 +13,13 @@ const Sidebar: FC = () => {
 
   const fileList = Object.keys(files).filter(path => !path.startsWith('/node_modules') && path !== '/package.json');
   
-  let packageJson = { dependencies: {} };
+  let packageJson: { dependencies: Record<string, string> } = { dependencies: {} };
   try {
     packageJson = files['/package.json'] ? JSON.parse(files['/package.json'].code) : { dependencies: {} };
   } catch (e) {
     // ignore parse errors
   }
-  const dependencies = packageJson.dependencies || {};
+  const dependencies: Record<string, string> = packageJson.dependencies || {};
 
   const handleCreateFile = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && newFileName) {
@@ -123,7 +123,7 @@ const Sidebar: FC = () => {
         </div>
         
         <div className="overflow-y-auto px-2 pb-4">
-          {Object.entries(dependencies).map(([name, version]) => (
+          {Object.entries(dependencies).map(([name]) => (
             <div key={name} className="group flex items-center justify-between rounded px-2 py-1 hover:bg-zinc-800/50">
               <div className="flex items-center gap-2 overflow-hidden">
                 <Package size={14} className="text-indigo-400 shrink-0" />
